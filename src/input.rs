@@ -11,6 +11,6 @@ pub fn from_list(day: &str) -> Vec<String> {
 	BufReader::new(file)
 		.lines()
 		.map(|l| l.unwrap())
-		.filter(|l| !l.is_empty())
+		//.filter(|l| !l.is_empty())
 		.collect()
 }
