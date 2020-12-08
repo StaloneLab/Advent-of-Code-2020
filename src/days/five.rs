@@ -22,7 +22,7 @@ pub fn run(input: Vec<String>) {
 	result.sort();
 
 	for (seat_n, seat_id) in result.iter().enumerate() {
-		if(seat_n > 0) {
+		if seat_n > 0 {
 			let prev = result[seat_n - 1];
 
 			if *seat_id != prev + 1 {

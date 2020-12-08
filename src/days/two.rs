@@ -44,6 +44,7 @@ fn qad_parser(input: &str) -> (u8, u8, char, String) {
 	result
 }
 
+#[allow(dead_code)]
 pub fn run_first(input: Vec<String>) {
 	let mut count = 0;
 

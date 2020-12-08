@@ -3,7 +3,8 @@ extern crate petgraph;
 use std::collections::HashMap;
 
 use petgraph::prelude::NodeIndex;
-use petgraph::graph::{ Graph, Node };
+use petgraph::graph::Graph;
+#[allow(unused_imports)]
 use petgraph::dot::Dot;
 use petgraph::algo::has_path_connecting;
 use petgraph::visit::EdgeRef;
@@ -86,9 +87,9 @@ pub fn run(input: Vec<String>) {
 	println!("Part one: {}", count);
 
 	// Second part
-	struct Recurse<'s> { f: &'s Fn(&Recurse, NodeIndex) -> usize }
+	struct Recurse<'s> { f: &'s dyn Fn(&Recurse, NodeIndex) -> usize }
 
-	let mut recurse_into = Recurse {
+	let recurse_into = Recurse {
 		f: &|recurse_into: &Recurse, node: NodeIndex| -> usize {
 			let mut current_weight = 0;
 

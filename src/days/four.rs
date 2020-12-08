@@ -1,9 +1,8 @@
 use std::collections::HashMap;
-use std::sync::Arc;
 
-static required_keywords: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
+static REQUIRED_KEYWORDS: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
 
-fn interval_checker_generator(start: usize, end: usize) -> Box<Fn(&str) -> bool> {
+fn interval_checker_generator(start: usize, end: usize) -> Box<dyn Fn(&str) -> bool> {
 	Box::new(move |s: &str| {
 		let sn = s.parse::<usize>();
 
@@ -21,14 +20,14 @@ pub fn run(input: Vec<String>) {
 	let height_cm_checker = interval_checker_generator(150, 193);
 	let height_in_checker = interval_checker_generator(59, 76);
 
-	let keywords_mapping: HashMap<&str, Box<Fn(&str) -> bool>> = {
+	let keywords_mapping: HashMap<&str, Box<dyn Fn(&str) -> bool>> = {
 		let mut hm = HashMap::new();
 	
 		hm.insert("byr", interval_checker_generator(1920, 2002));
 		hm.insert("iyr", interval_checker_generator(2010, 2020));
 		hm.insert("eyr", interval_checker_generator(2020, 2030));
 		hm.insert("hgt", Box::new(|s: &str| {
-			if(!s.ends_with("cm") && !s.ends_with("in")) { return false; }
+			if !s.ends_with("cm") && !s.ends_with("in") { return false; }
 
 			if s.ends_with("cm") {
 				return height_cm_checker(&s[..s.len() - 2]);
@@ -39,7 +38,7 @@ pub fn run(input: Vec<String>) {
 			}
 		}));
 		hm.insert("hcl", Box::new(|s: &str| {
-			if(!s.starts_with('#')) { return false; }
+			if !s.starts_with('#') { return false; }
 
 			usize::from_str_radix(&s[1..], 16).is_ok()
 		}));
@@ -64,7 +63,7 @@ pub fn run(input: Vec<String>) {
 	let mut count = 0;
 	let mut found_keywords: Vec<&str> = Vec::new();
 
-	for (i, line) in input.iter().enumerate() {
+	for line in input.iter() {
 		if line.is_empty() {
 			if found_keywords.len() == 7 {
 				count += 1;
@@ -86,7 +85,7 @@ pub fn run(input: Vec<String>) {
 
 				println!("{} {}", split, valid);
 
-				if required_keywords.contains(&result[0]) && !found_keywords.contains(&result[0]) && valid {
+				if REQUIRED_KEYWORDS.contains(&result[0]) && !found_keywords.contains(&result[0]) && valid {
 					found_keywords.push(result[0]);
 				}
 			}

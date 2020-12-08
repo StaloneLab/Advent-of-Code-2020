@@ -1,6 +1,6 @@
 pub fn run(input: Vec<String>) {
 	// Convert strings to usizes
-	let mut input_mapped = input
+	let input_mapped = input
 		.iter()
 		.map(|ls| ls.parse::<isize>().unwrap())
 		.into_iter();
