@@ -25,10 +25,13 @@ impl SeatState {
 
 type Seats = Vec<Vec<SeatState>>;
 
-fn run_pass(seats: &mut Seats) -> bool {
+fn run_pass(seats: &mut Seats, strict: bool) -> bool {
 	// Make the system evolve
 	let before_state = seats.clone();
 	let mut changed = false;
+
+	let occupied_limit = if strict { 4 } else { 5 };
+	let inner_range_limit = if strict { 2 } else { seats.len() };
 
 	for (rid, row) in seats.iter_mut().enumerate() {
 		for (sid, seat) in row.iter_mut().enumerate() {
@@ -37,15 +40,21 @@ fn run_pass(seats: &mut Seats) -> bool {
 
 			for offset_rid in 0..=2 {
 				for offset_sid in 0..=2 {
-					if	rid + offset_rid >= 1 && sid + offset_sid >= 1 &&
-						rid + offset_rid <= before_state.len() &&
-						sid + offset_sid <= before_state[0].len() &&
-						(offset_rid != 1 || offset_sid != 1) {
-						let test_seat = &before_state[rid + offset_rid - 1][sid + offset_sid - 1];
+					for i in 1..inner_range_limit {
+						if	rid + i * offset_rid >= i &&
+							sid + i * offset_sid >= i &&
+							rid + i * offset_rid < before_state.len() + i &&
+							sid + i * offset_sid < before_state[0].len() + i &&
+							(offset_rid != 1 || offset_sid != 1) {
 
-						if !test_seat.is_empty() {
-							occupied_count += 1;
-							all_empty = false;
+							let test_seat = &before_state[rid + i * offset_rid - i][sid + i * offset_sid - i];
+
+							if !test_seat.is_empty() {
+								occupied_count += 1;
+								all_empty = false;
+							}
+
+							if !test_seat.is_floor() { break; }
 						}
 					}
 				}
@@ -57,7 +66,7 @@ fn run_pass(seats: &mut Seats) -> bool {
 					changed = true;
 				}
 
-				if occupied_count >= 4 && !seat.is_empty() {
+				if occupied_count >= occupied_limit && !seat.is_empty() {
 					*seat = SeatState::Empty;
 					changed = true;
 				}
@@ -66,20 +75,6 @@ fn run_pass(seats: &mut Seats) -> bool {
 	}
 
 	changed
-}
-
-fn display_seats(seats: &Seats) {
-	for row in seats {
-		for seat in row {
-			match seat {
-				SeatState::Occupied => print!("#"),
-				SeatState::Empty => print!("L"),
-				SeatState::Floor => print!("."),
-			}
-		}
-
-		println!("");
-	}
 }
 
 pub fn run(input: Vec<String>) {
@@ -101,16 +96,7 @@ pub fn run(input: Vec<String>) {
 		})
 		.collect();
 
-	let mut i = 0;
-
-	println!("========== Pass {} ==========", i);
-	display_seats(&seats);
-
-	while run_pass(&mut seats) {
-		i += 1;
-		println!("========== Pass {} ==========", i);
-		display_seats(&seats);
-	}
+	while run_pass(&mut seats, false) {}
 
 	let mut occupied = 0;
 
@@ -120,5 +106,5 @@ pub fn run(input: Vec<String>) {
 		}
 	}
 
-	println!("Part 1: {}", occupied);
+	println!("Part 2: {}", occupied);
 }
