@@ -2,7 +2,7 @@ mod input;
 mod days;
 
 use input::from_list;
-use days::{ one, two, three, four, five, six, seven, eight, nine, ten, eleven };
+use days::{ one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve };
 
 fn main() {
 	let args: Vec<String> = std::env::args().collect();
@@ -20,6 +20,7 @@ fn main() {
 		9 => nine::run(from_list("nine")),
 		10 => ten::run(from_list("ten")),
 		11 => eleven::run(from_list("eleven")),
+		12 => twelve::run(from_list("twelve")),
 		_ => eprintln!("Nothing for this day"),
 	};
 }
